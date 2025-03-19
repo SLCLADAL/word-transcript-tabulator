@@ -4,6 +4,55 @@ library(officer)
 doc <- read_docx(data_file)
 docx_summary(doc)
 doc_df <- docx_summary(doc)
+
+doc_df[1:10,]
+
+split_metadata <- function(doc_summary, split_at){
+  return(list(doc_summary[1:split_at,], doc_summary[split_at:nrow(doc_summary),]))
+}
+
+# How do we handle blocks of blank lines?
+guess_transcript_start <- function(doc_summary){
+  for (i in 1:nrow(doc_summary)){
+    row = doc_summary[i,]
+    # Header ends with first blank line
+    if (trimws(row$text) == '') {
+      return(i)
+    }
+    # Header ends with first list paragraph style (numbered list?)
+    else if (row$style_name == 'List Paragraph'){
+      return(i)
+    }
+  }
+}
+
+
+doc_files = list.files("data", full.names=TRUE, pattern="*.docx")
+
+loaded_docs <- lapply(lapply(doc_files[1:10], read_docx), docx_summary)
+transcripts_starts <- lapply(loaded_docs, guess_transcript_start)
+
+doc_files[9]
+
+out <- split_metadata(doc_df, guess_transcript_start(doc_df))
+meta = out[[1]]
+transcript = out[[2]]
+
+# Metadata/header detection:
+# Seems like it's possible *most* of the time
+# The other cases will be annoying - work a bit on how do we show people that?
+# 
+
+# Assumption: dozens of word docs uploaded - can manually verify things
+# like header locations.
+
+# Next session:
+# Keep working on the metadata split across all the files.
+
+# If this is an iterative process, how do we record decisions made about things
+# like metadata/transcript split points?
+
+
 ## Output columns
 ## Text
 ## Turn number
