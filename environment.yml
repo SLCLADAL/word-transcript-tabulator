@@ -1,0 +1,7 @@
+name: transcript-tabulator
+channels:
+  - conda-forge
+dependencies:
+  - r-base
+  - r-writexl
+  - r-officer
