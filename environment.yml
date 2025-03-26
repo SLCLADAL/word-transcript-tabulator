@@ -6,3 +6,4 @@ dependencies:
   - r-writexl
   - r-officer
   - r-dplyr
+  - r-stringr
