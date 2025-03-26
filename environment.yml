@@ -5,3 +5,4 @@ dependencies:
   - r-base
   - r-writexl
   - r-officer
+  - r-dplyr

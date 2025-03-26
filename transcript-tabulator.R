@@ -20,12 +20,34 @@ guess_transcript_start <- function(doc_summary){
       return(i)
     }
     # Header ends with first list paragraph style (numbered list?)
-    else if (row$style_name == 'List Paragraph'){
+    else if (!is.na(row$style_name) & row$style_name == 'List Paragraph'){
       return(i)
     }
   }
+  # If we don't match any other rules, set the header to be zero lines long
+  # at the top of the file.
+  return(1)
 }
 
+extract_speaker_codes <- function(doc_summary){
+  speaker_match = '^[[:alpha:]]+?(?=:)'
+  matches = regexpr(speaker_match, doc_summary$text, perl = TRUE)
+  doc_summary$speaker_code <- regmatches(doc_summary$text, matches) 
+  return(doc_summary)
+}
+
+extract_speaker_codes(loaded_docs[1])
+
+
+# Processing turns:
+# Extract speaker (if any)
+# Extract timecodes (if any)
+# If no speaker?
+# Separate the speaker and the text - leave timecodes in place for interpretation
+
+
+
+lapply(doc_df$text, strsplit, ':')
 
 doc_files = list.files("data", full.names=TRUE, pattern="*.docx")
 
@@ -74,3 +96,7 @@ doc_df$level==1
 ## Next step - write metadata splitter (split into header rows, transcript)
 ## Then - work on transcript rows
 ## Open question - do we want to do this for Michael's transcript properly or make it more general? 
+
+library(openxlsx)
+
+write_xlsx(list(pivoted, to_pivot), 'test.xlsx')
